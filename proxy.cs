@@ -14,8 +14,15 @@ class Server
 {
   private TcpListener _listener;
 
+  private string      _winProxyAddress;
+  private WebProxy    _winProxy;
+
   public Server( int port )
   {
+    _winProxyAddress = Environment.GetEnvironmentVariable("WIN_PROXY");
+    _winProxy = new WebProxy( _winProxyAddress );
+    _winProxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+
     _listener = new TcpListener( IPAddress.Any, port );   // fix: use IPAddress.Loopback ??
   }
 
@@ -112,11 +119,8 @@ private void HandleClientComm(object obj)
 
 private void fetchResponse( String url, NetworkStream stream )
 {
-    WebProxy proxy = new WebProxy( "http://proxy.bigcorp:57416" );
-    proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
-
     WebClient client = new WebClient();
-    client.Proxy = proxy;
+    client.Proxy = _winProxy;
      
     // Download data.
     Console.WriteLine( "before download data" );
@@ -177,14 +181,22 @@ private void sendResponse( NetworkStream stream )
 
 static void Main(string[] args) 
 {
+  string winProxyAddress = Environment.GetEnvironmentVariable("WIN_PROXY");
+  if( winProxyAddress == null )
+  {
+    Console.WriteLine( "*** error - WIN_PROXY env variable missing, please set e.g.:");
+    Console.WriteLine( "  $ set WIN_PROXY=http://proxy.bigcorp:57416");
+    Environment.Exit( 1 );  // todo: check if 0 is ok and 1 is error etc.
+  }
+
   int port = 3333;
-    
-  Console.WriteLine( "  start web proxy server on port " + port );
+  Console.WriteLine( "start web proxy server on port " + port );
+  Console.WriteLine( "  using WIN_PROXY >>" + winProxyAddress + "<<");
 
   Server srv = new Server( port );
   srv.ListenAndServe();
 
-  Console.WriteLine( "  bye" );
+  Console.WriteLine( "bye" );
 }
 
 } // class Server
