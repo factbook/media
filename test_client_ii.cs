@@ -17,18 +17,21 @@ class Test
         Environment.Exit( 1 );  // note: 0 is OK, 1..N  is ERROR
     }
 
-     Console.WriteLine( "  WIN_PROXY="+ winProxyAddress );
+     Console.WriteLine( "  WIN_PROXY=" + winProxyAddress );
 
      WebProxy proxy = new WebProxy( winProxyAddress );
      proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
 
-     WebClient client = new WebClient();
-     client.Proxy = proxy;
+     HttpWebRequest req  = (HttpWebRequest) WebRequest.Create( "http://www.derstandard.at" );
+     Console.WriteLine( "  req.RequestUri: " + req.RequestUri );
 
-     Console.WriteLine( "  before OpenRead" );
-     StreamReader reader = new StreamReader( client.OpenRead( "http://www.orf.at" ));
-     Console.WriteLine( "  after OpenRead" );
+     req.Proxy = proxy;
 
+     Console.WriteLine( "  before GetResponse()" );
+     HttpWebResponse res = (HttpWebResponse) req.GetResponse();
+     Console.WriteLine( "  after GetResponse()" );
+
+     StreamReader reader = new StreamReader( res.GetResponseStream() ); 
      string line = null;
      int lineno = 0;
      while( (line=reader.ReadLine()) != null ) {
@@ -38,3 +41,4 @@ class Test
      }
   } // fn main
 } // class Test
+

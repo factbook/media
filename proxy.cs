@@ -7,9 +7,6 @@ using System.IO;
 using System.Collections;
 
 
-namespace Test
-{
-
 class Server
 {
   private TcpListener _listener;
@@ -200,4 +197,3 @@ static void Main(string[] args)
 }
 
 } // class Server
-} // namespace Test

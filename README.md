@@ -1,7 +1,8 @@
 # web-proxy-win
 
-Simple personal (authenticaton) web proxy for Windows (in C#/.NET) - supports Kerberos authenticaton 'n' friends.
-
+Simple personal (authenticaton) web proxy for Windows (in C#/.NET) -
+supports Integrated Windows Authentication (IWA)
+ a.k.a. Kerberos, HTTP Negotiate, SPNEGO, GSSAPI 'n' friends.
 
 Note: For now supports only HTTP (not HTTPS) and only supports GET requests.
 
@@ -36,6 +37,15 @@ running on your machine on loopback (`127.0.0.1`) e.g.:
 That's it. Now you can use your command line tools of choice (e.g. `gem`, `npm`, `bower`, `curl`, etc.)
 again to fetch documents, archives and more from the internet.
 
+
+## References
+
+### Wikipedia
+- [Integrated Windows Authentication](http://en.wikipedia.org/wiki/Integrated_Windows_Authentication)
+- [Kerberos](http://en.wikipedia.org/wiki/Kerberos_(protocol))
+- [Security Support Provider Interface (SSPI)](http://en.wikipedia.org/wiki/Security_Support_Provider_Interface) 
+- [Simple and Protected GSSAPI Negotiation Mechanism (SPNEGO)](http://en.wikipedia.org/wiki/SPNEGO)
+    - [Generic Security Services Application Program Interface (GSSAPI)](http://en.wikipedia.org/wiki/Generic_Security_Services_Application_Program_Interface)
 
 
 ## License
