@@ -16,11 +16,13 @@ class Server
 
   public Server( int port )
   {
-    _winProxyAddress = Environment.GetEnvironmentVariable("WIN_PROXY");
+    _winProxyAddress = Environment.GetEnvironmentVariable( "WIN_PROXY" );
     _winProxy = new WebProxy( _winProxyAddress );
     _winProxy.Credentials = CredentialCache.DefaultNetworkCredentials;
 
-    _listener = new TcpListener( IPAddress.Any, port );   // fix: use IPAddress.Loopback ??
+    // NOTE: loopback is equivalent to 127.0.0.1 in dotted-quad notation
+    // NOTE: use loopback - avoid firewall-popup (only local machine can connect to loopback)
+    _listener = new TcpListener( IPAddress.Loopback, port );   // was: IPAddress.Any
   }
 
 private void ListenAndServe()
@@ -130,8 +132,14 @@ private void fetchResponse( String url, NetworkStream stream )
     Console.WriteLine( " content-type: |>" + contentType + "<|" );
     Console.WriteLine( " content-length: |>" + contentLength + "<|" );
 
-     Console.WriteLine( "begin send response" );
+    // print all (response) headers
+    for( int i=0; i < client.ResponseHeaders.Count; ++i)  
+      Console.WriteLine("  ["+(i+1)+"] " + client.ResponseHeaders.Keys[i] + ": " + client.ResponseHeaders[i] );
 
+     // todo/fix:  use http status code
+     //   check if 200 etc.
+
+     Console.WriteLine( "begin send response" );
      Console.WriteLine( "begin send response-head" );
      var t = new StreamWriter(stream);
         t.WriteLine( "HTTP/1.0 200 OK" );
@@ -178,12 +186,12 @@ private void sendResponse( NetworkStream stream )
 
 static void Main(string[] args) 
 {
-  string winProxyAddress = Environment.GetEnvironmentVariable("WIN_PROXY");
+  string winProxyAddress = Environment.GetEnvironmentVariable( "WIN_PROXY" );
   if( winProxyAddress == null )
   {
     Console.WriteLine( "*** error - WIN_PROXY env variable missing, please set e.g.:");
     Console.WriteLine( "  $ set WIN_PROXY=http://proxy.bigcorp:57416");
-    Environment.Exit( 1 );  // todo: check if 0 is ok and 1 is error etc.
+    Environment.Exit( 1 );  // NOTE: 0 is OK; 1..N is ERROR
   }
 
   int port = 3333;
