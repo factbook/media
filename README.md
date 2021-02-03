@@ -1,2 +1,2 @@
-# World Factbook Media - Flags, Maps, Locators
+World Factbook Media - Flags, Maps, Locators
 
